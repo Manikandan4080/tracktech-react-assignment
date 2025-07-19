@@ -108,8 +108,8 @@ const OrderCreation = () => {
     );
 
     return (
-        <div className="w-full h-hull p-3 py-6 flex flex-col gap-3">
-            <Card>
+        <div className="w-full h-screen p-3 py-6 flex flex-col gap-3 min-h-screen overflow-auto">
+            <Card className="mt-16 md:mt-0">
                 <CardHeader>
                     <CardTitle>Create New Order</CardTitle>
                 </CardHeader>

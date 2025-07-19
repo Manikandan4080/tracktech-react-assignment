@@ -28,7 +28,7 @@ const Navbar = () => {
     };
 
     return (
-        <section className="bottom-0 w-full md:w-fit h-fit md:h-full bg-[#F7F7F5] p-2 flex flex-row md:flex-col justify-between md:justify-center rounded-tl-lg  rounded-tr-lg md:rounded-tl-none md:rounded-br-lg  items-center">
+        <section className="bottom-0 w-full md:w-fit h-fit md:h-full bg-[#222] p-2 flex flex-row md:flex-col justify-between md:justify-center rounded-tl-lg  rounded-tr-lg md:rounded-tl-none md:rounded-br-lg  items-center">
             {navLinks.map((navItem) => (
                 <div
                     onClick={() => onNavigate(navItem.path)}
@@ -38,13 +38,13 @@ const Navbar = () => {
                     <button
                         className={`p-2 ${
                             isActive(navItem)
-                                ? "bg-[#222] text-white"
-                                : "bg-transparent"
+                                ? "bg-[#F7F7F5] text-[#222]"
+                                : "bg-transparent text-[#F7F7F5]"
                         } rounded-lg px-3 cursor-pointer`}
                     >
                         {navItem.icon}
                     </button>
-                    <p className="text-[12px]">{navItem.name}</p>
+                    <p className="text-[12px] text-[#F7F7F5]">{navItem.name}</p>
                 </div>
             ))}
         </section>

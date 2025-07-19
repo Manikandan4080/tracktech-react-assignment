@@ -5,7 +5,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -65,8 +65,8 @@ const LineMaster = () => {
   }
 
   return (
-    <div className="w-full h-hull py-6 md:py-3">
-      <CardHeader className="flex flex-row items-center justify-between">
+    <div className="w-full h-screen py-6 md:py-3 min-h-screen overflow-auto">
+      <CardHeader className="flex flex-row items-center justify-between mt-16 md:mt-0">
         <CardTitle>Line Master</CardTitle>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -115,7 +115,7 @@ const LineMaster = () => {
           </DialogContent>
         </Dialog>
       </CardHeader>
-      <CardContent>
+      <CardContent className="mt-16 md:mt-0">
         <Table>
           <TableHeader>
             <TableRow>

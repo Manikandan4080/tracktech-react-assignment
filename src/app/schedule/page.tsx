@@ -153,9 +153,9 @@ const SchedulerCalendar = () => {
     }
 
     return (
-        <div className="w-full h-hull p-3 py-6 flex flex-col gap-3">
+        <div className="w-full h-screen p-3 py-6 flex flex-col gap-3 min-h-screen overflow-auto">
             {/* Unscheduled Orders */}
-            <Card className="">
+            <Card className="mt-16 md:mt-0">
                 <CardHeader>
                     <CardTitle className="flex items-center ">
                         <Package className="w-5 h-5" />
@@ -163,7 +163,7 @@ const SchedulerCalendar = () => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="flex flex-wrap ">
+                    <div className="flex flex-wrap gap-3">
                         {getUnscheduledOrders().map((order) => (
                             <div
                                 key={order.id}
@@ -210,7 +210,7 @@ const SchedulerCalendar = () => {
                             >
                                 <ChevronLeft className="w-4 h-4" />
                             </Button>
-                            <span className="font-medium">
+                            <span className="font-medium text-nowrap">
                                 {formatDisplayDate(weekDates[0])} -{" "}
                                 {formatDisplayDate(weekDates[6])}
                             </span>
@@ -312,7 +312,7 @@ const SchedulerCalendar = () => {
                                                                 }
                                                                 title="Click to unschedule"
                                                             >
-                                                                <div className="font-medium">
+                                                                <div className="font-medium truncate">
                                                                     {
                                                                         order.orderNo
                                                                     }

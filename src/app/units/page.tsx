@@ -86,8 +86,8 @@ const UnitMaster = () => {
     };
 
     return (
-        <div className="shadow-none rounded-none w-full h-full py-6 md:py-3">
-            <CardHeader className="flex flex-row items-center justify-between">
+        <div className="w-full h-screen py-6 md:py-3 relative  min-h-screen overflow-auto">
+            <CardHeader className="flex flex-row items-center justify-between sticky top-0 md:relative mt-16 md:mt-0">
                 <CardTitle>Unit Master</CardTitle>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
@@ -140,7 +140,7 @@ const UnitMaster = () => {
                     </DialogContent>
                 </Dialog>
             </CardHeader>
-            <CardContent>
+            <CardContent className="mt-16 md:mt-0">
                 <Table>
                     <TableHeader>
                         <TableRow>
