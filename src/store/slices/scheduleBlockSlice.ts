@@ -17,7 +17,7 @@ const scheduledBlocksSlice = createSlice({
       state.scheduledBlocks.push(action.payload)
     },
     addScheduledBlocks: (state, action: PayloadAction<ScheduledBlock[]>) => {
-      state.scheduledBlocks = action.payload
+      state.scheduledBlocks.push(...action.payload)
     },
     updateScheduledBlocks: (state, action: PayloadAction<ScheduledBlock[]>) => {
       state.scheduledBlocks = action.payload

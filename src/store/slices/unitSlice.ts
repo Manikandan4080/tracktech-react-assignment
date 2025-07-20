@@ -6,7 +6,10 @@ interface UnitsState {
 }
 
 const initialState: UnitsState = {
-  units: [],
+  units: [
+    { id: "1", name: "Unit A", location: "Building 1" },
+    { id: "2", name: "Unit B", location: "Building 2" },
+  ],
 }
 
 const unitsSlice = createSlice({
