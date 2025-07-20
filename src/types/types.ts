@@ -8,7 +8,9 @@ export interface Line {
   id: string
   name: string
   unitId: string
+  dailyCapacity: number
 }
+
 
 export interface Shift {
   id: string
@@ -24,18 +26,22 @@ export interface Order {
   quantity: number
   deliveryDate: string
   unitId: string
-  lineIds: string[]
+  assignedLines: string[]
   shiftId: string
-  scheduledDate?: string
-  scheduledLineId?: string
+  scheduledDates?: {
+    lineId: string
+    date: string
+    allocatedQuantity: number
+  }[]
 }
 
-export interface ScheduledOrder extends Order {
-  scheduledDate: string
-  scheduledLineId: string
-}
 
-export interface OrdersState {
-  orders: Order[]
-  scheduledOrders: ScheduledOrder[]
+export interface ScheduledBlock {
+  blockId: string
+  orderId: string
+  lineId: string
+  date: string
+  allocatedQuantity: number
+  styleName: string
+  orderNo: string
 }

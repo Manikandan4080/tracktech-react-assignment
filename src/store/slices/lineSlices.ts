@@ -5,27 +5,12 @@ interface LinesState {
   lines: Line[]
 }
 
-// Helper functions for localStorage
-const loadLinesFromStorage = (): Line[] => {
-  try {
-    const stored = localStorage.getItem('lines')
-    return stored ? JSON.parse(stored) : []
-  } catch (error) {
-    console.error('Error loading lines from localStorage:', error)
-    return []
-  }
-}
-
-const saveLinesToStorage = (lines: Line[]) => {
-  try {
-    localStorage.setItem('lines', JSON.stringify(lines))
-  } catch (error) {
-    console.error('Error saving lines to localStorage:', error)
-  }
-}
-
 const initialState: LinesState = {
-  lines: loadLinesFromStorage(),
+  lines: [
+    { id: "1", name: "Line A", unitId: "1", dailyCapacity: 1000 },
+    { id: "2", name: "Line B", unitId: "1", dailyCapacity: 800 },
+    { id: "3", name: "Line C", unitId: "2", dailyCapacity: 1200 },
+  ],
 }
 
 const linesSlice = createSlice({
@@ -34,28 +19,21 @@ const linesSlice = createSlice({
   reducers: {
     addLine: (state, action: PayloadAction<Line>) => {
       state.lines.push(action.payload)
-      saveLinesToStorage(state.lines)
     },
     updateLine: (state, action: PayloadAction<Line>) => {
       const index = state.lines.findIndex((line) => line.id === action.payload.id)
       if (index !== -1) {
         state.lines[index] = action.payload
-        saveLinesToStorage(state.lines)
       }
     },
     deleteLine: (state, action: PayloadAction<string>) => {
       state.lines = state.lines.filter((line) => line.id !== action.payload)
-      saveLinesToStorage(state.lines)
     },
-    deleteLinesByUnit: (state, action: PayloadAction<string>) => {
-      state.lines = state.lines.filter((line) => line.unitId !== action.payload)
-      saveLinesToStorage(state.lines)
-    },
-    loadLines: (state) => {
-      state.lines = loadLinesFromStorage()
+    setLines: (state, action: PayloadAction<Line[]>) => {
+      state.lines = action.payload
     },
   },
 })
 
-export const { addLine, updateLine, deleteLine, deleteLinesByUnit, loadLines } = linesSlice.actions
+export const { addLine, updateLine, deleteLine, setLines } = linesSlice.actions
 export default linesSlice.reducer

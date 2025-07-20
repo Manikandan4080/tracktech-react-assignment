@@ -1,11 +1,12 @@
 "use client";
 
 import type React from "react";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Table,
     TableBody,
@@ -21,17 +22,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import toast from "react-hot-toast";
-
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Plus } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { addUnit, deleteUnit, updateUnit } from "@/store/slices/unitSlice";
+import { addUnit, updateUnit, deleteUnit } from "@/store/slices/unitSlice";
+import { selectUnits } from "@/store/selectors";
 import { Unit } from "@/types/types";
-import { deleteLinesByUnit } from "@/store/slices/lineSlices";
 
 const UnitMaster = () => {
     const dispatch = useAppDispatch();
-    const units = useAppSelector((state) => state.units.units);
+    const units = useAppSelector(selectUnits);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingUnit, setEditingUnit] = useState<Unit | null>(null);
@@ -42,16 +41,14 @@ const UnitMaster = () => {
 
         if (editingUnit) {
             dispatch(updateUnit({ ...editingUnit, ...formData }));
-            toast.success("Unit updated successfully!");
         } else {
             dispatch(
                 addUnit({
                     id: Date.now().toString(),
                     name: formData.name,
-                    location: formData.location || undefined,
+                    location: formData.location,
                 })
             );
-            toast.success("Unit added successfully!");
         }
 
         setFormData({ name: "", location: "" });
@@ -66,119 +63,121 @@ const UnitMaster = () => {
     };
 
     const handleDelete = (id: string) => {
-        const toastId = toast.loading("Deleting unit...");
-
-        setTimeout(() => {
-            dispatch(deleteUnit(id));
-            dispatch(deleteLinesByUnit(id))
-
-            toast(`Unit removed`, {
-                id: toastId,
-                icon: "🗑️",
-                duration: 2000,
-            });
-        }, 500);
+        dispatch(deleteUnit(id));
     };
 
-    const resetForm = () => {
-        setFormData({ name: "", location: "" });
+    const openAddDialog = () => {
         setEditingUnit(null);
+        setFormData({ name: "", location: "" });
+        setIsDialogOpen(true);
     };
 
     return (
-        <div className="w-full h-screen py-6 md:py-3 relative  min-h-screen overflow-auto">
-            <CardHeader className="flex flex-row items-center justify-between sticky top-0 md:relative mt-16 md:mt-0">
-                <CardTitle>Unit Master</CardTitle>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button onClick={resetForm}>
-                            <Plus className="w-4 h-4 mr-2" />
-                            Add Unit
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>
-                                {editingUnit ? "Edit Unit" : "Add New Unit"}
-                            </DialogTitle>
-                        </DialogHeader>
-                        <form
-                            onSubmit={handleSubmit}
-                            className="flex flex-col gap-6"
-                        >
-                            <div className="flex flex-col gap-2">
-                                <Label htmlFor="name">Unit Name *</Label>
-                                <Input
-                                    id="name"
-                                    value={formData.name}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            name: e.target.value,
-                                        })
-                                    }
-                                    required
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <Label htmlFor="location">Location</Label>
-                                <Input
-                                    id="location"
-                                    value={formData.location}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            location: e.target.value,
-                                        })
-                                    }
-                                />
-                            </div>
-                            <Button type="submit" className="w-full">
-                                {editingUnit ? "Update Unit" : "Add Unit"}
+        <div className="w-full h-full py-6 px-3 bg-gray-50 min-h-screen overflow-auto">
+            <Card className="mt-16 md:mt-0">
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle>Unit Master</CardTitle>
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button onClick={openAddDialog}>
+                                <Plus className="w-4 h-4 mr-2" />
+                                Add Unit
                             </Button>
-                        </form>
-                    </DialogContent>
-                </Dialog>
-            </CardHeader>
-            <CardContent className="mt-16 md:mt-0">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Unit Name</TableHead>
-                            <TableHead>Location</TableHead>
-                            <TableHead>Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {units.map((unit) => (
-                            <TableRow key={unit.id}>
-                                <TableCell>{unit.name}</TableCell>
-                                <TableCell>{unit.location || "-"}</TableCell>
-                                <TableCell>
-                                    <div className="flex gap-2">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => handleEdit(unit)}
-                                        >
-                                            <Edit className="w-4 h-4" />
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() =>
-                                                handleDelete(unit.id)
-                                            }
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>
+                                    {editingUnit ? "Edit Unit" : "Add New Unit"}
+                                </DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div>
+                                    <Label htmlFor="name">Unit Name</Label>
+                                    <Input
+                                        id="name"
+                                        value={formData.name}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                name: e.target.value,
+                                            })
+                                        }
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="location">
+                                        Location (Optional)
+                                    </Label>
+                                    <Input
+                                        id="location"
+                                        value={formData.location}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                location: e.target.value,
+                                            })
+                                        }
+                                    />
+                                </div>
+                                <div className="flex justify-end space-x-2">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setIsDialogOpen(false)}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button type="submit">
+                                        {editingUnit ? "Update" : "Add"}
+                                    </Button>
+                                </div>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Unit Name</TableHead>
+                                <TableHead>Location</TableHead>
+                                <TableHead>Actions</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
+                        </TableHeader>
+                        <TableBody>
+                            {units.map((unit) => (
+                                <TableRow key={unit.id}>
+                                    <TableCell>{unit.name}</TableCell>
+                                    <TableCell>
+                                        {unit.location || "-"}
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex space-x-2">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleEdit(unit)}
+                                            >
+                                                <Pencil className="w-4 h-4" />
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() =>
+                                                    handleDelete(unit.id)
+                                                }
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
         </div>
     );
 };

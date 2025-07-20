@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,17 +23,24 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Trash2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { Plus, Trash2 } from "lucide-react";
-import { Order } from "@/types/types";
 import { addOrder, deleteOrder } from "@/store/slices/orderSlice";
+import { removeScheduledBlocksByOrderId } from "@/store/slices/scheduleBlockSlice";
+import {
+    selectUnits,
+    selectLines,
+    selectShifts,
+    selectOrders,
+} from "@/store/selectors";
+import { Order } from "@/types/types";
 
 const OrderCreation = () => {
     const dispatch = useAppDispatch();
-    const orders = useAppSelector((state) => state.orders.orders);
-    const units = useAppSelector((state) => state.units.units);
-    const lines = useAppSelector((state) => state.lines.lines);
-    const shifts = useAppSelector((state) => state.shifts.shifts);
+    const units = useAppSelector(selectUnits);
+    const lines = useAppSelector(selectLines);
+    const shifts = useAppSelector(selectShifts);
+    const orders = useAppSelector(selectOrders);
 
     const [formData, setFormData] = useState({
         orderNo: "",
@@ -40,7 +48,7 @@ const OrderCreation = () => {
         quantity: "",
         deliveryDate: "",
         unitId: "",
-        lineIds: [] as string[],
+        assignedLines: [] as string[],
         shiftId: "",
     });
 
@@ -54,34 +62,43 @@ const OrderCreation = () => {
             quantity: Number.parseInt(formData.quantity),
             deliveryDate: formData.deliveryDate,
             unitId: formData.unitId,
-            lineIds: formData.lineIds,
+            assignedLines: formData.assignedLines,
             shiftId: formData.shiftId,
         };
 
         dispatch(addOrder(newOrder));
 
+        // Reset form
         setFormData({
             orderNo: "",
             styleName: "",
             quantity: "",
             deliveryDate: "",
             unitId: "",
-            lineIds: [],
+            assignedLines: [],
             shiftId: "",
         });
     };
 
-    const handleLineToggle = (lineId: string) => {
-        setFormData((prev) => ({
-            ...prev,
-            lineIds: prev.lineIds.includes(lineId)
-                ? prev.lineIds.filter((id) => id !== lineId)
-                : [...prev.lineIds, lineId],
-        }));
+    const handleLineSelection = (lineId: string, checked: boolean) => {
+        if (checked) {
+            setFormData({
+                ...formData,
+                assignedLines: [...formData.assignedLines, lineId],
+            });
+        } else {
+            setFormData({
+                ...formData,
+                assignedLines: formData.assignedLines.filter(
+                    (id) => id !== lineId
+                ),
+            });
+        }
     };
 
-    const handleDelete = (id: string) => {
-        dispatch(deleteOrder(id));
+    const handleDelete = (orderId: string) => {
+        dispatch(deleteOrder(orderId));
+        dispatch(removeScheduledBlocksByOrderId(orderId));
     };
 
     const getUnitName = (unitId: string) => {
@@ -89,13 +106,9 @@ const OrderCreation = () => {
         return unit?.name || "Unknown Unit";
     };
 
-    const getLineNames = (lineIds: string[]) => {
-        return lineIds
-            .map((id) => {
-                const line = lines.find((l) => l.id === id);
-                return line?.name || "Unknown Line";
-            })
-            .join(", ");
+    const getLineName = (lineId: string) => {
+        const line = lines.find((l) => l.id === lineId);
+        return line?.name || "Unknown Line";
     };
 
     const getShiftName = (shiftId: string) => {
@@ -108,7 +121,7 @@ const OrderCreation = () => {
     );
 
     return (
-        <div className="w-full h-screen p-3 py-6 flex flex-col gap-3 min-h-screen overflow-auto">
+        <div className="w-full h-full flex flex-col gap-6 py-6 px-3 bg-gray-50 min-h-screen overflow-auto">
             <Card className="mt-16 md:mt-0">
                 <CardHeader>
                     <CardTitle>Create New Order</CardTitle>
@@ -117,7 +130,9 @@ const OrderCreation = () => {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                             <div className="w-full flex flex-col gap-2">
-                                <Label htmlFor="orderNo">Order No</Label>
+                                <Label htmlFor="orderNo" className="truncate">
+                                    Order No (Optional)
+                                </Label>
                                 <Input
                                     id="orderNo"
                                     value={formData.orderNo}
@@ -131,7 +146,7 @@ const OrderCreation = () => {
                                 />
                             </div>
                             <div className="w-full flex flex-col gap-2">
-                                <Label htmlFor="styleName">Style Name *</Label>
+                                <Label htmlFor="styleName">Style Name</Label>
                                 <Input
                                     id="styleName"
                                     value={formData.styleName}
@@ -145,7 +160,7 @@ const OrderCreation = () => {
                                 />
                             </div>
                             <div className="w-full flex flex-col gap-2">
-                                <Label htmlFor="quantity">Quantity *</Label>
+                                <Label htmlFor="quantity">Quantity</Label>
                                 <Input
                                     id="quantity"
                                     type="number"
@@ -161,7 +176,7 @@ const OrderCreation = () => {
                             </div>
                             <div className="w-full flex flex-col gap-2">
                                 <Label htmlFor="deliveryDate">
-                                    Delivery Date *
+                                    Delivery Date
                                 </Label>
                                 <Input
                                     id="deliveryDate"
@@ -178,22 +193,21 @@ const OrderCreation = () => {
                             </div>
                             <div className="flex justify-between gap-3">
                                 <div className="w-full flex flex-col gap-2">
-                                    <Label htmlFor="unit">Unit *</Label>
+                                    <Label htmlFor="unit">Unit</Label>
                                     <Select
                                         value={formData.unitId}
                                         onValueChange={(value) =>
                                             setFormData({
                                                 ...formData,
                                                 unitId: value,
-                                                lineIds: [],
+                                                assignedLines: [],
                                             })
                                         }
-                                        required
                                     >
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Select a unit" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="w-full">
                                             {units.map((unit) => (
                                                 <SelectItem
                                                     key={unit.id}
@@ -206,7 +220,7 @@ const OrderCreation = () => {
                                     </Select>
                                 </div>
                                 <div className="w-full flex flex-col gap-2">
-                                    <Label htmlFor="shift">Shift *</Label>
+                                    <Label htmlFor="shift">Shift</Label>
                                     <Select
                                         value={formData.shiftId}
                                         onValueChange={(value) =>
@@ -215,12 +229,11 @@ const OrderCreation = () => {
                                                 shiftId: value,
                                             })
                                         }
-                                        required
                                     >
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Select a shift" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="w-full">
                                             {shifts.map((shift) => (
                                                 <SelectItem
                                                     key={shift.id}
@@ -238,8 +251,8 @@ const OrderCreation = () => {
                         </div>
 
                         {formData.unitId && (
-                            <div className="">
-                                <Label>Lines Required *</Label>
+                            <div>
+                                <Label>Lines Required (Multi-select)</Label>
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
                                     {availableLines.map((line) => (
                                         <div
@@ -248,15 +261,22 @@ const OrderCreation = () => {
                                         >
                                             <Checkbox
                                                 id={line.id}
-                                                checked={formData.lineIds.includes(
+                                                checked={formData.assignedLines.includes(
                                                     line.id
                                                 )}
-                                                onCheckedChange={() =>
-                                                    handleLineToggle(line.id)
+                                                onCheckedChange={(checked) =>
+                                                    handleLineSelection(
+                                                        line.id,
+                                                        checked as boolean
+                                                    )
                                                 }
                                             />
-                                            <Label htmlFor={line.id}>
-                                                {line.name}
+                                            <Label
+                                                htmlFor={line.id}
+                                                className="text-sm"
+                                            >
+                                                {line.name} (
+                                                {line.dailyCapacity}/day)
                                             </Label>
                                         </div>
                                     ))}
@@ -264,21 +284,16 @@ const OrderCreation = () => {
                             </div>
                         )}
 
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={formData.lineIds.length === 0}
-                        >
-                            <Plus className="w-4 h-4 mr-2" />
+                        <Button type="submit" className="w-full">
                             Create Order
                         </Button>
                     </form>
                 </CardContent>
             </Card>
 
-            <div>
+            <Card>
                 <CardHeader>
-                    <CardTitle>Orders List</CardTitle>
+                    <CardTitle>Created Orders</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Table>
@@ -300,12 +315,20 @@ const OrderCreation = () => {
                                     <TableCell>{order.orderNo}</TableCell>
                                     <TableCell>{order.styleName}</TableCell>
                                     <TableCell>{order.quantity}</TableCell>
-                                    <TableCell>{order.deliveryDate}</TableCell>
+                                    <TableCell>
+                                        {new Date(
+                                            order.deliveryDate
+                                        ).toLocaleDateString()}
+                                    </TableCell>
                                     <TableCell>
                                         {getUnitName(order.unitId)}
                                     </TableCell>
                                     <TableCell>
-                                        {getLineNames(order.lineIds)}
+                                        {order.assignedLines
+                                            .map((lineId) =>
+                                                getLineName(lineId)
+                                            )
+                                            .join(", ")}
                                     </TableCell>
                                     <TableCell>
                                         {getShiftName(order.shiftId)}
@@ -326,7 +349,7 @@ const OrderCreation = () => {
                         </TableBody>
                     </Table>
                 </CardContent>
-            </div>
+            </Card>
         </div>
     );
 };

@@ -1,15 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit"
-import unitsSlice from "./slices/unitSlice"
-import linesSlice from "./slices/lineSlices"
-import shiftsSlice from "./slices/shiftSlices"
-import ordersSlice from "./slices/orderSlice"
+import unitsReducer from "./slices/unitSlice"
+import linesReducer from "./slices/lineSlices"
+import shiftsReducer from "./slices/shiftSlices"
+import ordersReducer from "./slices/orderSlice"
+import scheduledBlocksReducer from "./slices/scheduleBlockSlice"
 
 export const store = configureStore({
   reducer: {
-    units: unitsSlice,
-    lines: linesSlice,
-    shifts: shiftsSlice,
-    orders: ordersSlice,
+    units: unitsReducer,
+    lines: linesReducer,
+    shifts: shiftsReducer,
+    orders: ordersReducer,
+    scheduledBlocks: scheduledBlocksReducer,
   },
 })
 
