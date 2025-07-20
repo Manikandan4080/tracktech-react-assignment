@@ -6,11 +6,7 @@ interface ShiftsState {
 }
 
 const initialState: ShiftsState = {
-  shifts: [
-    { id: "1", name: "Morning Shift", startTime: "08:00", endTime: "16:00" },
-    { id: "2", name: "Evening Shift", startTime: "16:00", endTime: "00:00" },
-    { id: "3", name: "Night Shift", startTime: "00:00", endTime: "08:00" },
-  ],
+  shifts: [],
 }
 
 const shiftsSlice = createSlice({

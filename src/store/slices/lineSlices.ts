@@ -6,11 +6,7 @@ interface LinesState {
 }
 
 const initialState: LinesState = {
-  lines: [
-    { id: "1", name: "Line A", unitId: "1", dailyCapacity: 1000 },
-    { id: "2", name: "Line B", unitId: "1", dailyCapacity: 800 },
-    { id: "3", name: "Line C", unitId: "2", dailyCapacity: 1200 },
-  ],
+  lines: [],
 }
 
 const linesSlice = createSlice({
