@@ -284,7 +284,7 @@ const OrderCreation = () => {
                             </div>
                         )}
 
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" className="w-full cursor-pointer">
                             Create Order
                         </Button>
                     </form>
@@ -335,6 +335,7 @@ const OrderCreation = () => {
                                     </TableCell>
                                     <TableCell>
                                         <Button
+                                            className="cursor-pointer"
                                             variant="outline"
                                             size="sm"
                                             onClick={() =>

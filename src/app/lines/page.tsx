@@ -108,7 +108,10 @@ const LineMaster = () => {
                     <CardTitle>Line Master</CardTitle>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button onClick={openAddDialog}>
+                            <Button
+                                className="cursor-pointer"
+                                onClick={openAddDialog}
+                            >
                                 <Plus className="w-4 h-4 mr-2" />
                                 Add Line
                             </Button>
@@ -120,7 +123,7 @@ const LineMaster = () => {
                                 </DialogTitle>
                             </DialogHeader>
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
+                                <div className="w-full flex flex-col gap-2">
                                     <Label htmlFor="name">Line Name</Label>
                                     <Input
                                         id="name"
@@ -134,7 +137,7 @@ const LineMaster = () => {
                                         required
                                     />
                                 </div>
-                                <div>
+                                <div className="w-full flex flex-col gap-2">
                                     <Label htmlFor="unit">
                                         Associated Unit
                                     </Label>
@@ -162,7 +165,7 @@ const LineMaster = () => {
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div>
+                                <div className="w-full flex flex-col gap-2">
                                     <Label htmlFor="capacity">
                                         Daily Capacity (pieces)
                                     </Label>
@@ -181,13 +184,17 @@ const LineMaster = () => {
                                 </div>
                                 <div className="flex justify-end space-x-2">
                                     <Button
+                                        className="cursor-pointer"
                                         type="button"
                                         variant="outline"
                                         onClick={() => setIsDialogOpen(false)}
                                     >
                                         Cancel
                                     </Button>
-                                    <Button type="submit">
+                                    <Button
+                                        className="cursor-pointer"
+                                        type="submit"
+                                    >
                                         {editingLine ? "Update" : "Add"}
                                     </Button>
                                 </div>
@@ -218,6 +225,7 @@ const LineMaster = () => {
                                     <TableCell>
                                         <div className="flex space-x-2">
                                             <Button
+                                                className="cursor-pointer"
                                                 variant="outline"
                                                 size="sm"
                                                 onClick={() => handleEdit(line)}
@@ -225,6 +233,7 @@ const LineMaster = () => {
                                                 <Pencil className="w-4 h-4" />
                                             </Button>
                                             <Button
+                                                className="cursor-pointer"
                                                 variant="outline"
                                                 size="sm"
                                                 onClick={() =>

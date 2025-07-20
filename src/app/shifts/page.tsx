@@ -88,7 +88,10 @@ const ShiftMaster = () => {
                     <CardTitle>Shift Master</CardTitle>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button onClick={openAddDialog}>
+                            <Button
+                                className="cursor-pointer"
+                                onClick={openAddDialog}
+                            >
                                 <Plus className="w-4 h-4 mr-2" />
                                 Add Shift
                             </Button>
@@ -102,7 +105,7 @@ const ShiftMaster = () => {
                                 </DialogTitle>
                             </DialogHeader>
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
+                                <div className="w-full flex flex-col gap-2">
                                     <Label htmlFor="name">Shift Name</Label>
                                     <Input
                                         id="name"
@@ -116,7 +119,7 @@ const ShiftMaster = () => {
                                         required
                                     />
                                 </div>
-                                <div>
+                                <div className="w-full flex flex-col gap-2">
                                     <Label htmlFor="startTime">
                                         Start Time
                                     </Label>
@@ -133,7 +136,7 @@ const ShiftMaster = () => {
                                         required
                                     />
                                 </div>
-                                <div>
+                                <div className="w-full flex flex-col gap-2">
                                     <Label htmlFor="endTime">End Time</Label>
                                     <Input
                                         id="endTime"
@@ -150,13 +153,17 @@ const ShiftMaster = () => {
                                 </div>
                                 <div className="flex justify-end space-x-2">
                                     <Button
+                                        className="cursor-pointer"
                                         type="button"
                                         variant="outline"
                                         onClick={() => setIsDialogOpen(false)}
                                     >
                                         Cancel
                                     </Button>
-                                    <Button type="submit">
+                                    <Button
+                                        className="cursor-pointer"
+                                        type="submit"
+                                    >
                                         {editingShift ? "Update" : "Add"}
                                     </Button>
                                 </div>
@@ -183,6 +190,7 @@ const ShiftMaster = () => {
                                     <TableCell>
                                         <div className="flex space-x-2">
                                             <Button
+                                                className="cursor-pointer"
                                                 variant="outline"
                                                 size="sm"
                                                 onClick={() =>
@@ -192,6 +200,7 @@ const ShiftMaster = () => {
                                                 <Pencil className="w-4 h-4" />
                                             </Button>
                                             <Button
+                                                className="cursor-pointer"
                                                 variant="outline"
                                                 size="sm"
                                                 onClick={() =>
